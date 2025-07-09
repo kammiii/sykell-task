@@ -1,0 +1,81 @@
+package api
+
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/gin-gonic/gin"
+	"github.com/kammiii/backend/internal/db"
+	"github.com/kammiii/backend/internal/models"
+)
+
+func GetAll(c *gin.Context) {
+	var urls []models.URL
+	db.DB.Find(&urls)
+	c.JSON(http.StatusOK, urls)
+}
+
+func GetByID(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var url models.URL
+	if err := db.DB.First(&url, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+		return
+	}
+	c.JSON(http.StatusOK, url)
+}
+
+type CreateURLInput struct {
+	Address string `json:"address" binding:"required,url"`
+}
+
+func CreateURL(c *gin.Context) {
+	var input CreateURLInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	url := models.URL{
+		Address: input.Address,
+		Status:  "queued",
+	}
+
+	if err := db.DB.Create(&url).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create URL"})
+		return
+	}
+
+	c.JSON(http.StatusCreated, url)
+}
+
+func StartCrawl(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var url models.URL
+
+	if err := db.DB.First(&url, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found"})
+		return
+	}
+
+	url.Status = "running"
+	db.DB.Save(&url)
+
+	// Future: kick off async crawler here
+	c.JSON(http.StatusOK, url)
+}
+
+func StopCrawl(c *gin.Context) {
+	id, _ := strconv.Atoi(c.Param("id"))
+	var url models.URL
+
+	if err := db.DB.First(&url, id).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found"})
+		return
+	}
+
+	url.Status = "stopped"
+	db.DB.Save(&url)
+
+	c.JSON(http.StatusOK, url)
+}

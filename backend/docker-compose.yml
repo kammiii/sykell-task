@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  mysql:
+    image: mysql:8
+    container_name: db-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: sykell
+      MYSQL_USER: sykelluser
+      MYSQL_PASSWORD: sykellpass
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - backend-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  backend:
+    build:
+      context: .
+    container_name: go-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    networks:
+      - backend-net
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_USER: sykelluser
+      DB_PASSWORD: sykellpass
+      DB_NAME: sykell
+
+volumes:
+  dbdata:
+
+networks:
+  backend-net:
+    driver: bridge

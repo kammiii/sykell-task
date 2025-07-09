@@ -1,0 +1,20 @@
+basePath: /
+consumes:
+- application/json
+externalDocs:
+  description: OpenAPI 3 Docs
+  url: http://localhost:8080/swagger/doc.json
+host: localhost:8080
+info:
+  contact:
+    email: team@sykell.com
+    name: Sykell Dev Team
+  description: API for crawling and analyzing websites
+  title: Sykell Crawler API
+  version: "1.0"
+paths: {}
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"
