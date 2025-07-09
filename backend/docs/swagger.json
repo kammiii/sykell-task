@@ -1,0 +1,28 @@
+{
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "schemes": [
+        "http"
+    ],
+    "swagger": "2.0",
+    "info": {
+        "description": "API for crawling and analyzing websites",
+        "title": "Sykell Crawler API",
+        "contact": {
+            "name": "Sykell Dev Team",
+            "email": "team@sykell.com"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8080",
+    "basePath": "/",
+    "paths": {},
+    "externalDocs": {
+        "description": "OpenAPI 3 Docs",
+        "url": "http://localhost:8080/swagger/doc.json"
+    }
+}
