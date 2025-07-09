@@ -39,6 +39,8 @@ services:
       DB_USER: sykelluser
       DB_PASSWORD: sykellpass
       DB_NAME: sykell
+    env_file:
+      - .env
 
 volumes:
   dbdata:

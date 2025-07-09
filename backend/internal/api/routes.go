@@ -13,12 +13,12 @@ func RegisterRoutes(r *gin.Engine) {
 		})
 	})
 
-	api := r.Group("/urls")
+	api := r.Group("/api")
 	{
-		api.GET("/", GetAll)
-		api.GET("/:id", GetByID)
-		api.POST("/", CreateURL)
-		api.POST("/:id/start", StartCrawl)
-		api.POST("/:id/stop", StopCrawl)
+		api.GET("/urls", GetAll)
+		api.GET("/urls/:id", GetByID)
+		api.POST("/urls", CreateURL)
+		api.POST("/urls/:id/start", StartCrawl)
+		api.POST("/urls/:id/stop", StopCrawl)
 	}
 }
