@@ -4,7 +4,7 @@ import {
 
 import RootLayout from "@/layouts/RootLayout"
 import Dashboard from "@/pages/Dashboard"
-import Details, { detailsLoader } from "@/pages/Details"
+import Details from "@/pages/Details"
 // import ErrorPage from "@/pages/ErrorPage"
 
 export const router = createBrowserRouter([
@@ -14,13 +14,12 @@ export const router = createBrowserRouter([
     // errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
+        path: "/",
         element: <Dashboard />,
-      },
-      {
-        path: "details/:id",
-        element: <Details />,
-        loader: detailsLoader,
+        children: [{
+          path: "url/:id",
+          element: <Details />,
+        }]
       },
     ],
   },
