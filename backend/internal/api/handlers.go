@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
 	"github.com/kammiii/backend/internal/db"
 	"github.com/kammiii/backend/internal/models"
@@ -61,7 +62,32 @@ func StartCrawl(c *gin.Context) {
 	url.Status = "running"
 	db.DB.Save(&url)
 
-	// Future: kick off async crawler here
+	go func(id int) {
+		var u models.URL
+		if err := db.DB.First(&u, id).Error; err != nil {
+			return
+		}
+
+		resp, err := http.Get(u.Address)
+		if err != nil {
+			u.Status = "error"
+			db.DB.Save(&u)
+			return
+		}
+		defer resp.Body.Close()
+
+		doc, err := goquery.NewDocumentFromReader(resp.Body)
+		if err != nil {
+			u.Status = "error"
+			db.DB.Save(&u)
+			return
+		}
+
+		u.Title = doc.Find("title").First().Text()
+		u.Status = "done"
+		db.DB.Save(&u)
+	}(id)
+
 	c.JSON(http.StatusOK, url)
 }
 
