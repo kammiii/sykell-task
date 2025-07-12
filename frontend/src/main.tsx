@@ -5,7 +5,8 @@ import { Toaster } from 'sonner';
 import './index.css'
 import { RouterProvider } from 'react-router-dom'
 import { router } from './router'
-const queryClient = new QueryClient()
+
+export const queryClient = new QueryClient()
 
 createRoot(document.getElementById('root')!).render(
   <QueryClientProvider client={queryClient}>
