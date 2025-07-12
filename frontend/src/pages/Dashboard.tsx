@@ -5,6 +5,7 @@ import Header from "@/components/dashboard/Header"
 import UrlList from "@/components/dashboard/UrlList"
 import AddUrlForm from "@/components/forms/AddUrlForm"
 import api from "@/lib/api/client"
+import { Url } from "@/components/dashboard/schema"
 
 export default function Dashboard() {
   const [showForm, setShowForm] = useState(false)
@@ -13,9 +14,10 @@ export default function Dashboard() {
   const { data: urls = [], isLoading, error } = useQuery({
     queryKey: ["urls"],
     queryFn: async () => {
-      const { data } = await api.get("/api/urls")
+      const { data } = await api.get<Url[]>("/api/urls")
       return data
     },
+    refetchInterval: 2000, // Refetch every 2 seconds
   })
 
   return (

@@ -3,13 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 import { Eye } from "lucide-react"
 import api from "@/lib/api/client"
-
-interface Url {
-  id: number
-  address: string
-  title: string
-  status: "queued" | "running" | "done" | "error" | "stopped"
-}
+import { Url } from "./schema"
 
 export default function UrlList({ urls }: { urls: Url[] }) {
   const queryClient = useQueryClient()
@@ -40,7 +34,9 @@ export default function UrlList({ urls }: { urls: Url[] }) {
           className="border rounded-xl p-4 flex items-center justify-between"
         >
           <div>
-            <p className="font-semibold">{url.title || url.address}</p>
+            <p className="font-semibold">
+              {url.title ? `${url.title} (${url.address})` : url.address}
+            </p>
             <p className="text-sm text-gray-500 capitalize">{url.status}</p>
           </div>
           <div className="space-x-2 flex items-center">
