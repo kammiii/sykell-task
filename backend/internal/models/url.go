@@ -7,6 +7,7 @@ type URL struct {
 	Address   string    `json:"address"`
 	Title     string    `json:"title"`
 	Status    string    `json:"status"` // queued, running, done, stopped, error
+	Error     string    `json:"error,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at,omitempty"`
 }

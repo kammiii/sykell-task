@@ -60,17 +60,14 @@ func StartCrawl(c *gin.Context) {
 	}
 
 	url.Status = "running"
+	url.Error = ""
 	db.DB.Save(&url)
 
-	go func(id int) {
-		var u models.URL
-		if err := db.DB.First(&u, id).Error; err != nil {
-			return
-		}
-
+	go func(u models.URL) {
 		resp, err := http.Get(u.Address)
 		if err != nil {
 			u.Status = "error"
+			u.Error = err.Error()
 			db.DB.Save(&u)
 			return
 		}
@@ -79,14 +76,16 @@ func StartCrawl(c *gin.Context) {
 		doc, err := goquery.NewDocumentFromReader(resp.Body)
 		if err != nil {
 			u.Status = "error"
+			u.Error = "failed to parse HTML"
 			db.DB.Save(&u)
 			return
 		}
 
-		u.Title = doc.Find("title").First().Text()
+		title := doc.Find("title").First().Text()
+		u.Title = title
 		u.Status = "done"
 		db.DB.Save(&u)
-	}(id)
+	}(url)
 
 	c.JSON(http.StatusOK, url)
 }
