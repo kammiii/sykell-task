@@ -1,31 +1,14 @@
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render } from '@testing-library/react';
 import MockAdapter from 'axios-mock-adapter';
-import { ReactElement, ReactNode } from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { ReactElement } from 'react';
 import api from '../api/client';
-import { vi } from 'vitest';
+import TestProviders from './providers';
 
 interface RenderOptions {
   withRouter?: boolean;
   initialEntries?: string[];
 }
 
-const queryClient = new QueryClient();
-
-const TestProviders = ({
-  children,
-  withRouter = false,
-  initialEntries
-}: { children?: ReactNode } & RenderOptions) => {
-  const content = (
-    <QueryClientProvider client={queryClient}>
-      {withRouter ? <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter> : children}
-    </QueryClientProvider>
-  );
-
-  return content;
-};
 
 export const renderInCtx = (children: ReactElement, opts?: RenderOptions) => {
   const { rerender, ...rest } = render(
