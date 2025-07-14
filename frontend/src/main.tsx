@@ -8,11 +8,15 @@ import { router } from './router'
 
 export const queryClient = new QueryClient()
 
-createRoot(document.getElementById('root')!).render(
-  <QueryClientProvider client={queryClient}>
-  <StrictMode>
-    <Toaster richColors position="top-right" />
-    <RouterProvider router={router} />
-  </StrictMode>,
-  </QueryClientProvider>
-)
+const container = document.getElementById('root');
+if (container) {
+  const root = createRoot(container);
+  root.render(
+    <QueryClientProvider client={queryClient}>
+      <StrictMode>
+        <Toaster richColors position="top-right" />
+        <RouterProvider router={router} />
+      </StrictMode>
+    </QueryClientProvider>
+  );
+}

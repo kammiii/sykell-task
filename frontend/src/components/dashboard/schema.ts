@@ -3,4 +3,5 @@ export interface Url {
   address: string
   title: string
   status: "queued" | "running" | "done" | "error" | "stopped"
+  created_at: string
 }
