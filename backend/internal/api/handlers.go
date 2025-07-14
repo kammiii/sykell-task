@@ -3,8 +3,8 @@ package api
 import (
 	"net/http"
 
-	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
+	"github.com/kammiii/backend/internal/crawler"
 	"github.com/kammiii/backend/internal/db"
 	"github.com/kammiii/backend/internal/models"
 )
@@ -76,26 +76,20 @@ func StartCrawl(c *gin.Context) {
 	db.DB.Save(&url)
 
 	go func(u models.URL) {
-		resp, err := http.Get(u.Address)
+		result, err := crawler.Crawl(u.Address)
 		if err != nil {
 			u.Status = "error"
 			u.Error = err.Error()
-			db.DB.Save(&u)
-			return
+		} else {
+			u.Title = result.Title
+			u.HTMLVersion = result.HTMLVersion
+			u.Headings = result.Headings
+			u.InternalLinks = result.InternalLinks
+			u.ExternalLinks = result.ExternalLinks
+			u.BrokenLinks = result.BrokenLinks
+			u.HasLoginForm = result.HasLoginForm
+			u.Status = "done"
 		}
-		defer resp.Body.Close()
-
-		doc, err := goquery.NewDocumentFromReader(resp.Body)
-		if err != nil {
-			u.Status = "error"
-			u.Error = "failed to parse HTML"
-			db.DB.Save(&u)
-			return
-		}
-
-		title := doc.Find("title").First().Text()
-		u.Title = title
-		u.Status = "done"
 		db.DB.Save(&u)
 	}(url)
 
