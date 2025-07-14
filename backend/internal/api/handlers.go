@@ -2,7 +2,6 @@ package api
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/PuerkitoBio/goquery"
 	"github.com/gin-gonic/gin"
@@ -11,18 +10,27 @@ import (
 )
 
 func GetAll(c *gin.Context) {
+	userID := c.GetUint("user_id")
 	var urls []models.URL
-	db.DB.Find(&urls)
+
+	if err := db.DB.Where("user_id = ?", userID).Order("created_at DESC").Find(&urls).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not retrieve URLs"})
+		return
+	}
+
 	c.JSON(http.StatusOK, urls)
 }
 
 func GetByID(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
+	userID := c.GetUint("user_id")
+	id := c.Param("id")
+
 	var url models.URL
-	if err := db.DB.First(&url, id).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{"error": "Not found"})
+	if err := db.DB.First(&url, "id = ? AND user_id = ?", id, userID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found"})
 		return
 	}
+
 	c.JSON(http.StatusOK, url)
 }
 
@@ -31,17 +39,21 @@ type CreateURLInput struct {
 }
 
 func CreateURL(c *gin.Context) {
-	var input CreateURLInput
-	if err := c.ShouldBindJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+	userID := c.GetUint("user_id")
+
+	var input struct {
+		Address string `json:"address"`
+	}
+	if err := c.ShouldBindJSON(&input); err != nil || input.Address == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid address"})
 		return
 	}
 
 	url := models.URL{
 		Address: input.Address,
 		Status:  "queued",
+		UserID:  userID,
 	}
-
 	if err := db.DB.Create(&url).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create URL"})
 		return
@@ -51,16 +63,16 @@ func CreateURL(c *gin.Context) {
 }
 
 func StartCrawl(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	var url models.URL
+	userID := c.GetUint("user_id")
+	id := c.Param("id")
 
-	if err := db.DB.First(&url, id).Error; err != nil {
+	var url models.URL
+	if err := db.DB.First(&url, "id = ? AND user_id = ?", id, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found"})
 		return
 	}
 
 	url.Status = "running"
-	url.Error = ""
 	db.DB.Save(&url)
 
 	go func(u models.URL) {
@@ -91,10 +103,11 @@ func StartCrawl(c *gin.Context) {
 }
 
 func StopCrawl(c *gin.Context) {
-	id, _ := strconv.Atoi(c.Param("id"))
-	var url models.URL
+	userID := c.GetUint("user_id")
+	id := c.Param("id")
 
-	if err := db.DB.First(&url, id).Error; err != nil {
+	var url models.URL
+	if err := db.DB.First(&url, "id = ? AND user_id = ?", id, userID).Error; err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"error": "URL not found"})
 		return
 	}
