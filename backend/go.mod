@@ -10,9 +10,12 @@ require (
 	github.com/swaggo/files v1.0.1
 	github.com/swaggo/gin-swagger v1.6.0
 	github.com/swaggo/swag v1.16.4
+	gorm.io/datatypes v1.2.6
 	gorm.io/driver/mysql v1.6.0
 	gorm.io/gorm v1.30.0
 )
+
+require github.com/google/uuid v1.6.0 // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
