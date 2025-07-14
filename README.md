@@ -117,7 +117,7 @@ yarn test
 - JWT middleware checks auth on every protected endpoint
 
 ## 📚 Useful Resources
-- [Gin Framework Docs](https://gin-gonic.com/docs/)
+- [Gin Framework Docs](https://gin-gonic.com/en/docs/)
 - [GORM Docs](https://gorm.io/docs/)
 - [React Query Docs](https://tanstack.com/query/latest/docs/react/overview)
 - [ShadCN UI Docs](https://ui.shadcn.com/)
