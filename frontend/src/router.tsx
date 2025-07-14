@@ -5,6 +5,7 @@ import {
 import RootLayout from "@/layouts/RootLayout"
 import Dashboard from "@/pages/Dashboard"
 import Details from "@/pages/Details"
+import Login from "./pages/Login"
 
 export const router = createBrowserRouter([
   {
@@ -21,4 +22,8 @@ export const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/login",
+    element: <Login />,
+  }
 ])
