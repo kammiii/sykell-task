@@ -4,6 +4,7 @@ import MockAdapter from 'axios-mock-adapter';
 import { ReactElement, ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import api from '../api/client';
+import { vi } from 'vitest';
 
 interface RenderOptions {
   withRouter?: boolean;

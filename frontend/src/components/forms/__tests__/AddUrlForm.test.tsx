@@ -9,7 +9,8 @@ describe('AddUrlForm', () => {
     axiosMock.onPost('/api/urls').reply(201, { id: 1, address: 'https://test.com', status: 'queued' });
 
     const screen = renderInCtx(<AddUrlForm onSuccess={onSuccess} />);
-    fireEvent.change(screen.getByPlaceholderText('Enter URL'), {
+    fireEvent.click(screen.getByText('Add URL'));
+    fireEvent.change(await screen.findByPlaceholderText('Enter URL'), {
       target: { value: 'https://test.com' },
     });
     fireEvent.click(screen.getByText('Add'));

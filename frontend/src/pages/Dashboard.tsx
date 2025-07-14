@@ -1,45 +1,30 @@
 import { Outlet } from "react-router-dom"
-import { useQuery, useQueryClient } from "@tanstack/react-query"
-import { useState } from "react"
-import Header from "@/components/dashboard/Header"
-import UrlList from "@/components/dashboard/UrlList"
-import AddUrlForm from "@/components/forms/AddUrlForm"
+import { useQuery } from "@tanstack/react-query"
+import UrlTable from "@/components/dashboard/UrlTable"
 import api from "@/lib/api/client"
 import { Url } from "@/components/dashboard/schema"
 
 export default function Dashboard() {
-  const [showForm, setShowForm] = useState(false)
-  const queryClient = useQueryClient()
-
   const { data: urls = [], isLoading, error } = useQuery({
     queryKey: ["urls"],
     queryFn: async () => {
       const { data } = await api.get<Url[]>("/api/urls")
       return data
     },
-    refetchInterval: 2000, // Refetch every 2 seconds
+    refetchInterval: (data) => {
+      return data.state.data?.some(url => url.status === 'running') ? 2000 : false
+    }
   })
 
   return (
-    <div className="p-6">
-      <Header onAdd={() => setShowForm((v) => !v)} />
-      {showForm && (
-        <div className="max-w-4xl mx-auto mb-4">
-          <AddUrlForm
-            onSuccess={() => {
-              setShowForm(false)
-              queryClient.invalidateQueries({ queryKey: ["urls"] })
-            }}
-          />
-        </div>
-      )}
+    <div className="lg:p-6 p-0 space-y-6">
       {isLoading && <p className="text-center mt-4">Loading...</p>}
       {error && (
         <p className="text-red-500 text-center mt-4">
           {(error as Error).message}
         </p>
       )}
-      {!isLoading && <UrlList urls={urls} />}
+      {!isLoading && <UrlTable data={urls} />}
       <Outlet />
     </div>
   )
