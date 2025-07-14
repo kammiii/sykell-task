@@ -21,6 +21,7 @@ require (
 	github.com/bytedance/sonic v1.13.3 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.5 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/gabriel-vasile/mimetype v1.4.9 // indirect
 	github.com/gin-contrib/sse v1.1.0 // indirect
 	github.com/go-openapi/jsonpointer v0.21.1 // indirect
@@ -32,6 +33,7 @@ require (
 	github.com/go-playground/validator/v10 v10.27.0 // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/goccy/go-json v0.10.5 // indirect
+	github.com/golang-jwt/jwt/v5 v5.2.2
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
